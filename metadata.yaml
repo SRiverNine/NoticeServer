@@ -1,0 +1,55 @@
+name: astrbot_plugin_notice_server
+display_name: NoticeServer API 封装（dscontrol 兼容）
+desc: 封装 NoticeServer/BotNotice 的 HTTP/WebSocket API，指令体系与 dscontrol 一致（ds 前缀），支持服务器列表、在线状态、版本查询、UUID 封禁管理、玩家记录查询、控制台命令、群名单同步（GroupWhitelist，支持 QQ 群与 Discord 服务器双平台，状态硬盘持久化+差量版本续接）、进群/退群事件即时上报（MemberEventSync，QQ 事件+Discord 成员事件）。验证码消息一律提交服务器判定，服务器未放行时静默不回复。
+help: |
+  命令列表（需要配置服务器地址、端口、Token）：
+  1. ds - 显示服务器列表与在线状态
+  2. ds version - 获取服务器版本号
+  3. ds servers - 显示服务器列表（含在线人数）
+  4. ds reload - 重新加载服务器配置
+  5. ds ban <PlayerId> [原因] - 封禁玩家（按 UUID，自动查记录，交互式确认）
+  6. ds banlist - 获取封禁列表（UUID 封禁）
+  7. ds unban <UUID|玩家名|IP> - 解封账号（需 Y 确认）
+  8. ds records <keyword> - 查询玩家登录记录
+  9. ds run <服务器> <命令> - 向指定服务器发送控制台命令
+  10. ds groupsync - 查看群名单同步状态
+  11. ds groupsync now - 手动触发一次群名单轮询
+  12. ds groupsync snapshot - 手动发送完整快照
+  13. ds groupsync delta [版本] - 手动补包（默认从版本 0）
+  14. ds lookup <QQ号|discord:ID> - 按绑定渠道实时反查 UUID（走服务端 Type 16）
+  15. ds bindings <UUID> - 查询账号绑定渠道
+
+  群名单同步（后台自动，可手动触发）：
+  - 开启 group_sync_enabled 并配置 group_sync_groups 后，定期拉取受管群成员并上报差异
+  - 可选配置 discord_sync_guilds（Discord 服务器ID列表）后，同步 Discord 服务器成员，
+    与 QQ 群共用 EWhitelistPush(Type=3) 版本链；快照按平台合并上报（Whitelist 含 "1"=QQ / "2"=Discord）
+  - 群名单状态（版本号/成员快照/差量历史）持久化到本地硬盘（group_sync_persist，默认开）
+  - 重启 Bot 后读取上次保存的版本续接，基于最后版本计算差量推送，不从 v0 重建
+  - 服务端请求完整清单时仍返回全量快照；补包/快照逻辑与旧版一致
+  群成员事件同步（后台自动，无需指令）：
+  - 开启 member_event_sync_enabled 后，监听受管群（group_sync_groups）的进群/退群通知；
+    Discord 服务器成员加入/离开（discord_sync_guilds）同样即时上报
+  - 防抖累积（静默 1 秒 / 最长 5 秒，可配置）后批量上报 MasterServer
+  - 上报复用现成 EWhitelistPush(Type=3) 群白名单增量推送版本链，服务端无需新增命令码
+
+  示例：
+  - ds
+  - ds version
+  - ds servers
+  - ds reload
+  - ds ban 江019 恶意TK
+  - ds banlist
+  - ds unban 550e8400-e29b-41d4-a716-446655440000
+  - ds records 江019
+  - ds run 通用服 kill 玩家名
+  - ds groupsync
+  - ds groupsync now
+  - ds lookup 123456789
+  - ds lookup discord:987654321098765432
+
+  公开接口无需鉴权，鉴权接口需要配置 Token。
+  只允许群聊使用，受 group_whitelist 白名单控制。
+  群名单同步需在配置中开启 group_sync_enabled 并填写 group_sync_groups。
+  成员事件同步需开启 member_event_sync_enabled（受管群沿用 group_sync_groups）。
+version: v2.8.0
+author: 爱丽丝 & 江绫忆玖

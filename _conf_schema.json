@@ -1,0 +1,208 @@
+{
+    "server_host": {
+        "description": "NoticeServer 服务器地址",
+        "hint": "服务器 IP 或域名，例如 26.182.49.113",
+        "type": "string",
+        "default": "127.0.0.1"
+    },
+    "server_port": {
+        "description": "NoticeServer / BotNotice 端口",
+        "hint": "服务器端口号。WebSocket 连接使用 BotNotice 端口，例如 11470",
+        "type": "int",
+        "default": 11470
+    },
+    "bot_id": {
+        "description": "🤖 WebSocket BotId（对应服务端 BotTokens 的键）",
+        "hint": "连接 /ws/bot 时作为 BotId 查询参数。需在服务端 config/ServersConfig.json 的 BotTokens 中配置同名键",
+        "type": "string",
+        "default": "botA"
+    },
+    "ws_token": {
+        "description": "🔑 WebSocket Token（对应服务端 BotTokens 中该 BotId 的值）",
+        "hint": "连接 /ws/bot 时作为 Token 查询参数。留空时回退使用 api_key",
+        "type": "string",
+        "default": ""
+    },
+    "api_key": {
+        "description": "🔑 旧版 HTTP 鉴权 Token (ApiKey) / ws_token 回退值",
+        "hint": "已迁移到 WebSocket；仅当 ws_token 为空时作为连接 Token 使用",
+        "type": "string",
+        "default": ""
+    },
+    "timeout": {
+        "description": "请求超时（秒）",
+        "hint": "请求超时时间",
+        "type": "int",
+        "default": 10
+    },
+    "group_whitelist": {
+        "description": "👥 QQ 群聊白名单（管理组，格式：QQ群号）",
+        "hint": "填入此白名单的QQ群号，群内所有人都可以使用插件（含 ban 等全部指令）。多个群用逗号分隔。例如 1037352700。仅作用于 QQ 平台；Discord 请配置 discord_group_whitelist",
+        "type": "list",
+        "default": [],
+        "item_type": "string"
+    },
+    "full_group_whitelist": {
+        "description": "🌐 QQ 全量白名单（基础功能群，格式：QQ群号）",
+        "hint": "填入此白名单的QQ群号，群内所有人都可以使用验证码、ds version、ds servers 等无需鉴权指令；调用 ban 等鉴权指令会静默忽略。仅作用于 QQ 平台；Discord 请配置 discord_full_group_whitelist。插件只在这些群（含群聊白名单管理组）内可用，其他群完全静默",
+        "type": "list",
+        "default": [],
+        "item_type": "string"
+    },
+    "group_user_whitelist": {
+        "description": "🔒 QQ 群聊-个人白名单（格式：群号:QQ号）",
+        "hint": "指定群内只有指定用户可用，其他不可用。格式：群号:QQ号，例如 1037352700:2951537603。仅作用于 QQ 平台；Discord 请配置 discord_group_user_whitelist",
+        "type": "list",
+        "default": [],
+        "item_type": "string"
+    },
+    "friend_whitelist": {
+        "description": "💬 QQ 私聊白名单（格式：QQ号）",
+        "hint": "填入此白名单的QQ号可以通过私聊会话使用插件。例如 2951537603。仅作用于 QQ 平台；Discord 请配置 discord_friend_whitelist",
+        "type": "list",
+        "default": [],
+        "item_type": "string"
+    },
+    "group_blacklist": {
+        "description": "🚫 QQ 群黑名单（格式：QQ群号）",
+        "hint": "加入此黑名单的QQ群聊，任何人（包括管理员/主人）调用插件指令都完全静默忽略，不输出任何回复。多个群用逗号分隔。例如 123456789。仅作用于 QQ 平台；Discord 请配置 discord_group_blacklist",
+        "type": "list",
+        "default": [],
+        "item_type": "string"
+    },
+    "discord_group_whitelist": {
+        "description": "👥 Discord 群聊白名单（管理组：服务器ID / 服务器ID:频道ID / 服务器ID:身份组ID）",
+        "hint": "填入受管的 Discord 服务器ID，该服务器内所有人都可使用插件（含 ban 等全部指令）；填 服务器ID:频道ID 则仅该频道生效；填 服务器ID:身份组ID 则仅持有该身份组的成员生效，且成员同步只把持有该身份组的人纳入白名单。多个用逗号分隔。例如 1536017556819935363、1536017556819935363:123456789012345678 或 1536017556819935363:987654321098765432。与 QQ 名单相互独立",
+        "type": "list",
+        "default": [],
+        "item_type": "string"
+    },
+    "discord_full_group_whitelist": {
+        "description": "🌐 Discord 全量白名单（基础功能：服务器ID / 服务器ID:频道ID / 服务器ID:身份组ID）",
+        "hint": "填入此白名单的 Discord 服务器/频道/身份组，范围内所有人都可以使用验证码、ds version、ds servers 等无需鉴权指令；调用 ban 等鉴权指令会静默忽略。支持 服务器ID、服务器ID:频道ID、服务器ID:身份组ID。与 QQ 名单相互独立。插件只在这些范围（含群聊白名单管理组）内可用，其他群完全静默",
+        "type": "list",
+        "default": [],
+        "item_type": "string"
+    },
+    "discord_group_user_whitelist": {
+        "description": "🔒 Discord 群聊-个人白名单（服务器ID:用户ID 或 服务器ID:频道ID:用户ID）",
+        "hint": "指定服务器/频道内只有指定用户可用。格式：服务器ID:用户ID 或 服务器ID:频道ID:用户ID，例如 1536017556819935363:1523609784949936218。多个用逗号分隔。与 QQ 名单相互独立",
+        "type": "list",
+        "default": [],
+        "item_type": "string"
+    },
+    "discord_friend_whitelist": {
+        "description": "💬 Discord 私聊白名单（格式：用户ID）",
+        "hint": "填入此白名单的 Discord 用户ID可以通过私聊会话使用插件。例如 1523609784949936218。多个用逗号分隔。与 QQ 名单相互独立",
+        "type": "list",
+        "default": [],
+        "item_type": "string"
+    },
+    "discord_group_blacklist": {
+        "description": "🚫 Discord 群黑名单（服务器ID 或 服务器ID:频道ID）",
+        "hint": "加入此黑名单的 Discord 服务器/频道，任何人（包括管理员/主人）调用插件指令都完全静默忽略。多个用逗号分隔。例如 1536017556819935363 或 1536017556819935363:123456789012345678。与 QQ 名单相互独立",
+        "type": "list",
+        "default": [],
+        "item_type": "string"
+    },
+    "auth_control": {
+        "description": "🔐 鉴权控制开关",
+        "hint": "开启时，ds version 和 ds servers 需要白名单验证；关闭时所有人可用",
+        "type": "bool",
+        "default": true
+    },
+    "max_inline_items": {
+        "description": "展示的最大内联条数，超过后转为聊天记录发送",
+        "hint": "默认 7，设为 0 则始终使用聊天记录",
+        "type": "int",
+        "default": 7
+    },
+    "sort_by_time": {
+        "description": "🔃 时间排序开关",
+        "hint": "开启后 ds records / ds ban 选人 / ds banlist 按时间降序（最新在前）；关闭则按服务器返回顺序。改动立即生效，无需重载",
+        "type": "bool",
+        "default": true
+    },
+    "group_sync_enabled": {
+        "description": "🔄 群名单同步总开关",
+        "type": "bool",
+        "default": false,
+        "hint": "开启后，插件会定期拉取受管群成员列表并上报 MasterServer（GroupWhitelist 群白名单同步）。服务端需在 ServersConfig.json 的 GroupWhitelist 中启用并配置对应群。"
+    },
+    "group_sync_groups": {
+        "description": "🔄 QQ 群名单同步受管群（直接填群号）",
+        "type": "list",
+        "default": [],
+        "item_type": "string",
+        "hint": "需要同步到 MasterServer 的 QQ 群号列表，例如 1037352700。多个用逗号分隔。"
+    },
+    "discord_sync_guilds": {
+        "description": "🔄 Discord 名单同步受管范围（服务器ID 或 服务器ID:频道ID）",
+        "type": "list",
+        "default": [],
+        "item_type": "string",
+        "hint": "需要同步到 MasterServer 的 Discord 受管范围列表：填服务器ID（整个服务器成员）或 服务器ID:身份组ID（只同步持有该身份组的成员）。例如 1536017556819935363 或 1536017556819935363:987654321098765432。提交到 MasterServer 时按服务器拉取成员并按身份组过滤（身份组条目只含玩家唯一平台ID，Discord 用户ID），与 QQ 群共用 EWhitelistPush(Type=3) 版本链，快照按平台合并上报（Platform=2）。成员加入/离开事件同步（member_event_sync_enabled）同样按该范围生效。留空则不启用 Discord 名单同步。"
+    },
+    "group_sync_interval": {
+        "description": "🔄 群名单轮询间隔（秒）",
+        "type": "int",
+        "default": 300,
+        "hint": "定期拉取成员列表并对比差异的时间间隔。最小 30 秒。",
+        "slider": {
+            "min": 30,
+            "max": 86400,
+            "step": 30
+        }
+    },
+    "group_sync_retention": {
+        "description": "🔄 群名单变更历史保留版本数",
+        "type": "int",
+        "default": 50,
+        "hint": "用于补包的历史版本数量。Master 检测到版本跳跃时会请求补包，历史被回收后回退为完整快照。最小 2。",
+        "slider": {
+            "min": 2,
+            "max": 500,
+            "step": 1
+        }
+    },
+    "group_sync_persist": {
+        "description": "💾 群名单状态硬盘持久化开关",
+        "type": "bool",
+        "default": true,
+        "hint": "开启后，版本号/成员快照/变更历史（每版本仅差量）保存到本地硬盘。重启 Bot 后读取上次保存的版本续接，基于最后版本计算差量并推送新版本，不从 v0 重建；服务端请求完整清单时仍返回全量快照。"
+    },
+    "group_sync_state_file": {
+        "description": "💾 群名单状态持久化文件路径（留空=插件 data 目录自动）",
+        "type": "string",
+        "default": "",
+        "hint": "保存群名单版本链的 JSON 文件路径。留空时自动使用插件目录下 data/group_sync_state.json（原子写入，损坏自动从零重建）。"
+    },
+    "member_event_sync_enabled": {
+        "description": "🔔 群成员事件同步总开关（进群/退群即时上报）",
+        "type": "bool",
+        "default": false,
+        "hint": "开启后，监听受管 QQ 群进群/退群通知（group_increase/group_decrease）与 Discord 服务器成员加入/离开事件（on_member_join/on_member_remove），防抖累积后批量上报 MasterServer。QQ 受管群沿用 group_sync_groups；Discord 受管范围沿用 discord_sync_guilds（服务器ID 或 服务器ID:频道ID，服务器级事件按前缀匹配命中）。上报复用现成 EWhitelistPush(Type=3) 群白名单增量推送接口，服务端无需新增命令码；需同时开启 group_sync_enabled。"
+    },
+    "member_event_quiet_window": {
+        "description": "🔔 事件静默窗口（秒）",
+        "type": "int",
+        "default": 1,
+        "hint": "收到事件后，若该秒数内无新事件则推送本批。值越小上报越及时，批量效果越差。最小 0.1。",
+        "slider": {
+            "min": 0,
+            "max": 60,
+            "step": 1
+        }
+    },
+    "member_event_max_window": {
+        "description": "🔔 事件最大累积窗口（秒）",
+        "type": "int",
+        "default": 5,
+        "hint": "持续有事件时最多累积该秒数，到点强制推送本批，避免无限推迟。最小等于静默窗口。",
+        "slider": {
+            "min": 1,
+            "max": 300,
+            "step": 1
+        }
+    }
+}
