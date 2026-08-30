@@ -813,7 +813,13 @@ class NoticeServerPlugin(Star):
     # ─── 合并转发（聊天记录）发送 ─────────────────────────────
 
     def _get_bot_uin(self, event: AstrMessageEvent) -> str:
-        """获取机器人的 QQ 号"""
+        """获取当前机器人的 QQ 号（优先取事件 self_id，避免跨 bot 用错号导致转发失败）"""
+        try:
+            sid = event.get_self_id()
+            if sid:
+                return str(sid)
+        except Exception:
+            pass
         try:
             raw = getattr(event.message_obj, "raw_message", None)
             if raw and isinstance(raw, dict):
@@ -822,7 +828,7 @@ class NoticeServerPlugin(Star):
                     return str(self_id)
         except Exception:
             pass
-        return "2854083164"  # fallback
+        return ""
 
     async def _send_as_forward(
         self,
@@ -917,8 +923,12 @@ class NoticeServerPlugin(Star):
             await event.send(MessageChain([Plain(text=text)]))
             return
 
-        # QQ 等平台：不限条数，全部以合并转发（聊天记录）形式发送
-        segments = self._merge_items_to_segments(title, items, footer)
+        # QQ 等平台：合并转发（聊天记录），但限制条数避免海量记录导致转发超量发送失败
+        shown = items[:max_items] if max_items > 0 and total > max_items else items
+        note = ""
+        if len(shown) != total:
+            note = f"\n（仅显示前 {max_items} 条，共 {total} 条）"
+        segments = self._merge_items_to_segments(title, shown, footer + note)
         await self._send_as_forward(event, segments)
 
     # ─── API 辅助 ────────────────────────────────────────────
@@ -2417,6 +2427,7 @@ class NoticeServerPlugin(Star):
                         text += (
                             "\n💡 若你使用手机端进行验证，请在保持游戏进程存活的情况下，"
                             "用小窗或者分屏进入QQ发起验证"
+                            "注意验证码大小写匹配"
                         )
                 yield event.plain_result(text)
         except Exception as e:
