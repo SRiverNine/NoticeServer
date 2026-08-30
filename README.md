@@ -7,7 +7,7 @@
 - **插件名**：`astrbot_plugin_notice_server`
 - **显示名**：NoticeServer API 封装（dscontrol 兼容）
 - **版本**：v2.8.0
-- **作者**：爱丽丝 & 江绫忆玖
+- **作者**：迪普希克
 
 ---
 
